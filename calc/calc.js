@@ -55,7 +55,8 @@ function recalculate() {
 
     let input = document.getElementById('query');
     let output = document.getElementById('result');
-
-    output.innerHTML = calc(input.value);
+    let calculated = calc(input.value);
+    let errormsg = "Invalid input";
+    output.innerHTML = isNaN(calculated) ? errormsg : calculated;
 
 }
