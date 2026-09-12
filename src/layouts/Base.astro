@@ -1,0 +1,76 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+const site = 'Patrick Linton';
+const full = title === site ? site : `${title} — ${site}`;
+
+const nav = [
+  { href: '/', label: 'Home' },
+  { href: '/projects', label: 'Projects' },
+  { href: '/blog', label: 'Writing' },
+];
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+---
+
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{full}</title>
+    {description && <meta name="description" content={description} />}
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={site}
+      href={new URL('rss.xml', Astro.site)}
+    />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+  </head>
+  <body class="font-sans antialiased">
+    <div class="mx-auto flex min-h-screen max-w-2xl flex-col px-6">
+      <header class="flex gap-6 py-10 text-sm">
+        {
+          nav.map((item) => (
+            <a
+              href={item.href}
+              class:list={[
+                'text-ink-muted dark:text-ink-muted-dark hover:text-accent',
+                'dark:hover:text-accent-dark',
+                path === item.href &&
+                  'text-ink dark:text-ink-dark underline underline-offset-4',
+              ]}
+            >
+              {item.label}
+            </a>
+          ))
+        }
+      </header>
+
+      <main class="flex-1 pb-20">
+        <slot />
+      </main>
+
+      <footer
+        class="border-rule dark:border-rule-dark text-ink-muted
+               dark:text-ink-muted-dark border-t py-8 text-sm"
+      >
+        <a class="hover:text-accent dark:hover:text-accent-dark"
+           href="https://github.com/pashri">GitHub</a>
+        <span class="px-2">·</span>
+        <a class="hover:text-accent dark:hover:text-accent-dark"
+           href="https://www.linkedin.com/in/plinton/">LinkedIn</a>
+        <span class="px-2">·</span>
+        <a class="hover:text-accent dark:hover:text-accent-dark"
+           href="/rss.xml">RSS</a>
+      </footer>
+    </div>
+  </body>
+</html>

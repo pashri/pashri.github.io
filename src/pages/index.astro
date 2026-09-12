@@ -1,0 +1,56 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+
+const projects = (await getCollection('projects'))
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 3);
+---
+
+<Base
+  title="Patrick Linton"
+  description="Software engineering leader in Cambridge."
+>
+  <h1 class="font-serif text-4xl tracking-tight">Patrick Linton</h1>
+
+  <div class="mt-8 space-y-4 text-lg leading-relaxed">
+    <p>
+      Software engineering leader in Cambridge, working across data
+      engineering and DevOps.
+    </p>
+    <p class="text-ink-muted dark:text-ink-muted-dark">
+      Outside work I build things that put real-world data somewhere
+      useful — a live bus map for Android, a reader for PDF maps, and the
+      occasional bit of hardware.
+    </p>
+  </div>
+
+  <h2 class="font-serif mt-16 text-xl">Selected projects</h2>
+
+  <ul class="mt-6 space-y-6">
+    {
+      projects.map((project) => (
+        <li>
+          <a
+            class="text-accent dark:text-accent-dark hover:underline
+                   underline-offset-4"
+            href={project.data.url}
+          >
+            {project.data.title}
+          </a>
+          <p class="text-ink-muted dark:text-ink-muted-dark mt-1">
+            {project.data.blurb}
+          </p>
+        </li>
+      ))
+    }
+  </ul>
+
+  <p class="mt-8 text-sm">
+    <a
+      class="text-ink-muted dark:text-ink-muted-dark hover:text-accent
+             dark:hover:text-accent-dark"
+      href="/projects">All projects →</a
+    >
+  </p>
+</Base>
