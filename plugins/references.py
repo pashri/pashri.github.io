@@ -112,6 +112,27 @@ def tag_problems(article: Article, settings: dict) -> list[str]:
     return problems
 
 
+def image_problems(article: Article) -> list[str]:
+    """Report an ``Image:`` field that names a file that doesn't exist.
+
+    Parameters
+    ----------
+    article : Article
+        The Post to check.
+
+    Returns
+    -------
+    list[str]
+        One message if the image is missing, otherwise none.
+    """
+    name = article.metadata.get("image")
+    folder = Path(article.source_path).with_suffix("")
+    if not name or (folder / name).is_file():
+        return []
+    return [f"{Path(article.source_path).name}: Image '{name}' not found "
+            f"in {folder.name}/"]
+
+
 def ref_problems(article: Article, preview: bool) -> list[str]:
     """List the Reference rules one Post breaks on its own.
 
@@ -190,7 +211,8 @@ def check(generator: ArticlesGenerator) -> None:
     problems = [problem for post in posts
                 for problem in ref_problems(article=post,
                                             preview=settings["PREVIEW"])
-                + tag_problems(article=post, settings=settings)]
+                + tag_problems(article=post, settings=settings)
+                + image_problems(article=post)]
     problems += sequence_problems(articles=posts)
     for problem in problems:
         logger.warning(problem)

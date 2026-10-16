@@ -163,6 +163,7 @@ The build stops, and nothing goes live, if:
 | `gap in 2026: 26/014 is missing` | Each year must run 001, 002, 003… with nothing skipped. A gap usually means a post was deleted (see below) or numbered by hand. |
 | `unknown tag 'transport'` | Use a tag from the lists in `pelicanconf.py`, spelt exactly, or [add a new one](#adding-a-tag). |
 | `no subject tag` | Add at least one subject tag, e.g. Transport. |
+| `Image 'chart.png' not found in parking-minimums/` | Put the file in the post's folder, or fix the name on the `Image:` line. |
 
 ## Changing or removing a published post
 

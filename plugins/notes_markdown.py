@@ -19,7 +19,7 @@ EMBED_LINE: Final[re.Pattern[str]] = re.compile(
     r"\{%\s*embed\s+(?P<attrs>.*?)\s*%\}")
 EMBED_ATTR: Final[re.Pattern[str]] = re.compile(r'(\w+)="([^"]*)"')
 RELATIVE_LINK: Final[re.Pattern[str]] = re.compile(
-    r'\b(src|data-src|data-data)="(?![a-z]+:|/|#)([^"]+)"')
+    r'\b(src|href|data-src|data-data)="(?![a-z]+:|/|#)([^"]+)"')
 POST_URL_TOKEN: Final[str] = "__POST_URL__"
 
 

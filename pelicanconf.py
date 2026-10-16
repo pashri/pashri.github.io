@@ -4,6 +4,7 @@ AUTHOR = "Patrick Linton"
 SITENAME = "Patrick Linton \u00b7 Notes"
 SITE_DESCRIPTION = "Notes on transport, housing, and climate."
 SITE_SUBTITLE = "Short reports on things I've read, seen, or built."
+SITESUBTITLE = SITE_DESCRIPTION
 SITEURL = ""
 PREVIEW = True
 
