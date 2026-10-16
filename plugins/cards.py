@@ -19,6 +19,14 @@ logger = logging.getLogger(__name__)
 CARD_SIZE: Final[ViewportSize] = {"width": 1200, "height": 630}
 CACHE_DIR: Final[Path] = Path(".cache/cards")
 POSTS: Final[list[Article]] = []
+FIT_TITLE: Final[str] = """() => {
+  const title = document.querySelector(".title");
+  let size = parseFloat(getComputedStyle(title).fontSize);
+  while (title.scrollHeight > title.clientHeight && size > 28) {
+    size -= 2;
+    title.style.fontSize = `${size}px`;
+  }
+}"""
 
 
 @dataclass(frozen=True)
@@ -167,6 +175,7 @@ def draw(cards: list[Card]) -> None:
                 source = cache_path(card).with_suffix(".html")
                 source.write_text(card.html, encoding="utf-8")
                 page.goto(source.resolve().as_uri(), wait_until="load")
+                page.evaluate(FIT_TITLE)
                 page.screenshot(path=cache_path(card))
             browser.close()
     logger.info("cards: drew %d, reused %d", len(pending),

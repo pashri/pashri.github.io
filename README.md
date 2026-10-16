@@ -19,14 +19,19 @@ Start the file with this header, then a blank line, then the post:
 Title: Parking minimums are a housing tax
 Date: 2026-10-20
 Tags: Housing, Transport, Sydney
-Summary: One sentence for link previews. Optional.
-Series: Optional. Posts with the same series name are grouped.
-Image: Optional. An image filename, used in the link-preview card.
 
 The first paragraph starts here.
 ```
 
 `Ref:` is left out on purpose. It's added when you publish (see below).
+
+Optional header lines, added above the blank line only when you need them:
+
+| Line | What it does |
+|---|---|
+| `Summary: One sentence.` | The description shown in link previews. Without it, the first paragraph is used. |
+| `Series: Recording every Sydney bus` | Adds the post to that series (see [Series](#series)). |
+| `Image: chart.png` | The picture in the link-preview card (see [Images](#images)). |
 
 ### Tags
 
@@ -141,7 +146,7 @@ Ref: 26/015
 Date: 2026-10-20
 ```
 
-Use the next number after the newest post on the home page. Every save on GitHub is a commit, and every commit goes live, so only do this with a finished post.
+Use the number after the highest `Ref:` for this year in `content/posts/` (hidden posts count too). If you get it wrong, the build fails with a clear message and nothing goes live. Every save on GitHub is a commit, and every commit goes live, so only do this with a finished post.
 
 ## References
 
@@ -181,7 +186,7 @@ Renaming a tag changes its page's address, and every post using the old name fai
 ## Other pages
 
 - **About:** `content/pages/about.md`.
-- **Sample posts:** the three lorem ipsum posts (`content/posts/sample-*.md` and their folders) exist to show every feature. Delete all three together, because deleting only some leaves a gap in 2025.
+- **Sample posts:** the three lorem ipsum posts (`content/posts/sample-*.md` and their folders) exist to show every feature. Delete all three together; deleting only some can leave a gap in 2025, which fails the build.
 
 ## Theme
 
@@ -198,4 +203,9 @@ If the site doesn't update, go to **github.com/pashri/pashri.github.io → Actio
 
 ## Visitor numbers
 
-The site counts visitors with GoatCounter, with no cookies. See the numbers at https://pashri.goatcounter.com. The code that connects the site to that dashboard is `GOATCOUNTER_CODE` in `publishconf.py`.
+The site can count visitors with GoatCounter, which uses no cookies. Counting is off until you switch it on:
+
+1. Sign up at https://www.goatcounter.com and pick a code, e.g. `pashri`.
+2. Set `GOATCOUNTER_CODE = "pashri"` in `publishconf.py`, then commit and push.
+
+The numbers then appear at `https://<code>.goatcounter.com`.

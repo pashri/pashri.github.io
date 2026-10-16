@@ -13,8 +13,8 @@
 {% set parts = article.content.split('<div class="footnote">') %}
 <div class="post">
 <header class="post-head">
-<div class="kicker">{% if article.unpublished %}Not yet published{% else %}Ref. {{ article.ref }}{% endif %} · {{ article.date.strftime("%-d %b %Y") }} · {{ article.ordered_tags|join(" · ", attribute="name") }}</div>
-<h1 class="title">{{ article.title }}</h1>
+<div class="kicker">{% if article.unpublished %}Not yet published{% else %}Ref. {{ article.ref }}{% endif %} · {{ article.date.strftime("%-d %b %Y") }} · {{ article.ordered_tags|join(" · ", attribute="name")|e }}</div>
+<h1 class="title">{{ article.title|e }}</h1>
 </header>
 <article class="prose">{{ parts[0] }}</article>
 </div>

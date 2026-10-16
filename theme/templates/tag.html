@@ -3,7 +3,7 @@
 {% block canonical %}{{ tag.url }}{% endblock %}
 {% block content %}
 {% include "_topbar.html" %}
-<header class="post-head"><div class="kicker">Tag</div><h1 class="title">{{ tag }}</h1></header>
+<header class="post-head"><div class="kicker">Tag</div><h1 class="title">{{ tag|e }}</h1></header>
 {% set posts = articles %}
 {% include "_register.html" %}
 {% endblock %}
