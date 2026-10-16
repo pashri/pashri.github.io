@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% import "_macros.html" as m with context %}
+{% block title %}{{ series_name }} | {{ SITENAME }}{% endblock %}
+{% block canonical %}{{ page_url }}{% endblock %}
+{% block content %}
+{% include "_topbar.html" %}
+<header class="post-head"><div class="kicker">Series · {{ parts|length }} parts</div><h1 class="title">{{ series_name }}</h1></header>
+<table class="register"><thead><tr><th>Ref.</th><th>Title</th><th class="tg">Tags</th></tr></thead>
+<tbody>{% for post in parts %}{{ m.row(post) }}{% endfor %}</tbody></table>
+{% endblock %}

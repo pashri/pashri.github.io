@@ -1,0 +1,7 @@
+{% if article.series %}
+{% set parts = article.series.all|selectattr("status", "equalto", "published")|list %}
+{% if not PREVIEW %}{% set parts = parts|rejectattr("unpublished")|list %}{% endif %}
+<aside class="series"><b><a href="{{ SITEURL }}/{{ article.series_url }}">Series: {{ article.series.name }}</a></b>
+<ol>{% for part in parts %}<li{% if part.source_path == article.source_path %} class="here"{% endif %}>{% if part.source_path == article.source_path %}{{ part.title }}{% else %}<a href="{{ SITEURL }}/{{ part.url }}">{{ part.title }}</a>{% endif %}{% if part.unpublished %} <span class="pending">(not yet published)</span>{% endif %}</li>{% endfor %}</ol>
+</aside>
+{% endif %}

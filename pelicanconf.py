@@ -12,6 +12,7 @@ ARTICLE_PATHS = ["posts"]
 PAGE_PATHS = ["pages"]
 STATIC_PATHS: list[str] = []
 THEME = "theme"
+DELETE_OUTPUT_DIRECTORY = True
 TIMEZONE = "UTC"
 DEFAULT_LANG = "en"
 DEFAULT_PAGINATION = False
@@ -63,6 +64,6 @@ MARKDOWN = {
 }
 
 PLUGIN_PATHS = ["plugins"]
-PLUGINS = ["series", "sitemap", "references", "notes_markdown"]
+PLUGINS = ["series", "sitemap", "references", "notes_markdown", "series_pages"]
 SITEMAP = {"format": "xml", "exclude": ["404.html"]}
 GOATCOUNTER_CODE = ""
