@@ -26,7 +26,7 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .page{max-width:44rem;margin:0 auto;padding:40px 0 64px 46px;display:grid;gap:20px}
 main,.post,.page-body{display:grid;gap:20px}
-@media (max-width:560px){.page{padding-left:30px;padding-top:24px}}
+@media (max-width:560px){.page{padding-left:1rem;padding-right:1rem;padding-top:24px}}
 p{margin:0}
 a{color:var(--ink);text-decoration-color:var(--red);text-decoration-thickness:1px;text-underline-offset:3px}
 a:hover{text-decoration-thickness:2px}
@@ -66,7 +66,7 @@ h1.title{font-size:34px;line-height:1.1;font-weight:400;margin:0;text-wrap:balan
 .post .prose{counter-reset:para}
 .post .prose > p{counter-increment:para;position:relative}
 .post .prose > p::before{content:counter(para) / "";position:absolute;left:-42px;width:30px;text-align:right;top:.42em;font-family:var(--mono);font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
-@media (max-width:560px){.post .prose > p::before{left:-30px;width:22px;font-size:10.5px}}
+@media (max-width:560px){.post .prose > p::before{left:auto;right:calc(100% + 6px);width:auto;font-size:10.5px}}
 .prose h2{font-size:23px;font-weight:500;line-height:1.2;margin:14px 0 0;text-wrap:balance}
 .prose h3{font-family:var(--sans);font-size:13px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;margin:6px 0 -6px}
 .prose ul,.prose ol{margin:0;padding-left:22px;display:grid;gap:6px}
