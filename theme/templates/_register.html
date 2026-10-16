@@ -1,0 +1,10 @@
+{% import "_macros.html" as m with context %}
+{% set pending = posts|selectattr("unpublished")|list %}
+{% set done = posts|rejectattr("unpublished")|sort(attribute="ref", reverse=True) %}
+<table class="register">
+<thead><tr><th>Ref.</th><th>Title</th><th class="tg">Tags</th></tr></thead>
+<tbody>
+{% if PREVIEW and pending %}<tr class="yr"><td colspan="3">Not yet published</td></tr>{% for post in pending %}{{ m.row(post) }}{% endfor %}{% endif %}
+{% for year, items in done|groupby("ref_year")|reverse %}<tr class="yr"><td colspan="3">{{ year }}</td></tr>{% for post in items %}{{ m.row(post) }}{% endfor %}{% endfor %}
+</tbody>
+</table>

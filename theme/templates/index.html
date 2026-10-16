@@ -1,2 +1,7 @@
 {% extends "base.html" %}
-{% block content %}{% for article in articles %}<p><a href="{{ SITEURL }}/{{ article.url }}">{{ article.title }}</a></p>{% endfor %}{% endblock %}
+{% block content %}
+{% include "_masthead.html" %}
+{% include "_tagbar.html" %}
+{% set posts = articles %}
+{% include "_register.html" %}
+{% endblock %}

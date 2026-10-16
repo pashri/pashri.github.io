@@ -1,0 +1,6 @@
+{% macro row(post) %}
+<tr><td class="ref">{{ post.ref if not post.unpublished else "—" }}</td><td class="ttl"><a href="{{ SITEURL }}/{{ post.url }}">{{ post.title }}</a></td><td class="tg">{{ post.ordered_tags|join(" · ", attribute="name") }}</td></tr>
+{% endmacro %}
+{% macro tag_link(name, tag_map) %}
+{% if name in tag_map %}<a href="{{ SITEURL }}/{{ tag_map[name].url }}">{{ name }}</a>{% else %}<span>{{ name }}</span>{% endif %}
+{% endmacro %}

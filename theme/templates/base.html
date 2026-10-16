@@ -1,5 +1,30 @@
 <!doctype html>
 <html lang="{{ DEFAULT_LANG }}">
-<head><meta charset="utf-8"><title>{% block title %}{{ SITENAME }}{% endblock %}</title></head>
-<body>{% block content %}{% endblock %}</body>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}{{ SITENAME }}{% endblock %}</title>
+{% if false %}{% block description %}{{ SITE_DESCRIPTION }}{% endblock %}{% endif %}
+<meta name="description" content="{{ self.description()|e }}">
+<link rel="canonical" href="{{ SITEURL }}/{% block canonical %}{% endblock %}">
+<meta property="og:site_name" content="{{ SITENAME }}">
+<meta property="og:title" content="{{ self.title()|e }}">
+<meta property="og:description" content="{{ self.description()|e }}">
+<meta property="og:url" content="{{ SITEURL }}/{{ self.canonical() }}">
+<meta property="og:type" content="{% block og_type %}website{% endblock %}">
+<meta property="og:image" content="{{ SITEURL }}/{% block card %}card.png{% endblock %}">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="alternate" type="application/rss+xml" title="{{ SITENAME }}" href="{{ SITEURL }}/{{ FEED_ALL_RSS }}">
+<link rel="icon" href="{{ SITEURL }}/theme/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="{{ SITEURL }}/theme/favicon.png" type="image/png">
+<link rel="stylesheet" href="{{ SITEURL }}/theme/css/site.css">
+{% block head %}{% endblock %}
+{% if GOATCOUNTER_CODE %}<script data-goatcounter="https://{{ GOATCOUNTER_CODE }}.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>{% endif %}
+</head>
+<body>
+<div class="page">
+{% block content %}{% endblock %}
+<footer class="site-footer"><a href="{{ SITEURL }}/">Home</a> · <a href="{{ SITEURL }}/about/">About</a> · <a href="{{ SITEURL }}/series/">Series</a> · <a href="{{ SITEURL }}/{{ FEED_ALL_RSS }}">RSS</a></footer>
+</div>
+</body>
 </html>

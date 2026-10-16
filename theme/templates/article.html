@@ -1,2 +1,23 @@
 {% extends "base.html" %}
-{% block content %}{% for article in articles %}<p><a href="{{ SITEURL }}/{{ article.url }}">{{ article.title }}</a></p>{% endfor %}{% endblock %}
+{% block title %}{{ article.title|striptags }} | {{ SITENAME }}{% endblock %}
+{% block description %}{{ article.description|striptags|trim }}{% endblock %}
+{% block canonical %}{{ article.url }}{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block card %}{% if article.unpublished %}card.png{% else %}{{ article.url }}card.png{% endif %}{% endblock %}
+{% block head %}
+{% if 'class="footnote-ref"' in article.content %}<script src="{{ SITEURL }}/theme/js/footnotes.js" defer></script>{% endif %}
+{% if 'class="embed"' in article.content %}<script src="{{ SITEURL }}/theme/js/embed.js" type="module"></script>{% endif %}
+{% endblock %}
+{% block content %}
+{% include "_topbar.html" %}
+{% set parts = article.content.split('<div class="footnote">') %}
+<div class="post">
+<header class="post-head">
+<div class="kicker">{% if article.unpublished %}Not yet published{% else %}Ref. {{ article.ref }}{% endif %} · {{ article.date.strftime("%-d %b %Y") }} · {{ article.ordered_tags|join(" · ", attribute="name") }}</div>
+<h1 class="title">{{ article.title }}</h1>
+</header>
+<article class="prose">{{ parts[0] }}</article>
+</div>
+{% include "_series_box.html" ignore missing %}
+{% if parts|length > 1 %}<section class="footnotes"><div class="footnote">{{ parts[1] }}</section>{% endif %}
+{% endblock %}

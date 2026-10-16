@@ -1,0 +1,3 @@
+{% import "_macros.html" as m with context %}
+{% set tag_map = {} %}{% for tag, _ in tags %}{% set _ = tag_map.update({tag.name: tag}) %}{% endfor %}
+<nav class="tagbar"><b>Subjects</b>{% for name in SUBJECT_TAGS %}{{ m.tag_link(name, tag_map) }}{% endfor %}<b>Places</b>{% for name in PLACE_TAGS %}{{ m.tag_link(name, tag_map) }}{% endfor %}</nav>

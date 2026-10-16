@@ -1,2 +1,7 @@
 {% extends "base.html" %}
-{% block content %}{% for article in articles %}<p><a href="{{ SITEURL }}/{{ article.url }}">{{ article.title }}</a></p>{% endfor %}{% endblock %}
+{% block title %}Not found | {{ SITENAME }}{% endblock %}
+{% block content %}
+{% include "_topbar.html" %}
+<header class="post-head"><div class="kicker">404</div><h1 class="title">There's nothing at this address</h1></header>
+<p>Every post is listed on the <a href="{{ SITEURL }}/">home page</a>.</p>
+{% endblock %}
