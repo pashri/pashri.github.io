@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Final
 from urllib.parse import unquote
 
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader, Template
 from pelican import Pelican, signals
 from pelican.contents import Article
 from pelican.generators import ArticlesGenerator
@@ -62,8 +62,14 @@ def title_size(title: str, has_image: bool) -> int:
     """
     sizes = (64, 52, 42) if has_image else (88, 72, 58)
     limits = (40, 75) if has_image else (45, 85)
-    return next((size for size, limit in zip(sizes, limits)
-                 if len(title) <= limit), sizes[-1])
+    return next(
+        (
+            size
+            for size, limit in zip(sizes, limits)
+            if len(title) <= limit
+        ),
+        sizes[-1],
+    )
 
 
 def remember(generator: ArticlesGenerator) -> None:
@@ -75,8 +81,11 @@ def remember(generator: ArticlesGenerator) -> None:
         Pelican's article generator.
     """
     POSTS.clear()
-    POSTS.extend(post for post in generator.articles
-                 if "ref" in post.metadata)
+    POSTS.extend(
+        post
+        for post in generator.articles
+        if "ref" in post.metadata
+    )
 
 
 def image_uri(post: Article) -> str:
@@ -99,6 +108,40 @@ def image_uri(post: Article) -> str:
     return (folder / name).resolve().as_uri()
 
 
+def post_card(post: Article, template: Template, settings: dict) -> str:
+    """Render the card HTML for one Post.
+
+    Parameters
+    ----------
+    post : Article
+        A published Post.
+    template : Template
+        The ``card.html`` template.
+    settings : dict
+        Pelican settings holding SITENAME and THEME.
+
+    Returns
+    -------
+    str
+        The card page as HTML.
+    """
+    image = image_uri(post=post)
+    kicker = (
+        f"Notes · {post.ref}"
+        if image
+        else f"{settings['SITENAME']} · {post.ref}"
+    )
+    fonts = Path(settings["THEME"]).resolve() / "static" / "fonts"
+    return template.render(
+        fonts=fonts.as_uri(),
+        image=image,
+        kicker=kicker,
+        title=post.title,
+        tags=" · ".join(tag.name for tag in post.ordered_tags),
+        title_size=title_size(title=post.title, has_image=bool(image)),
+    )
+
+
 def build_cards(pelican: Pelican) -> list[Card]:
     """Render the HTML for the site card and every Post's card.
 
@@ -114,25 +157,28 @@ def build_cards(pelican: Pelican) -> list[Card]:
     """
     settings, output = pelican.settings, Path(pelican.output_path)
     theme = Path(settings["THEME"]).resolve()
-    template = Environment(loader=FileSystemLoader(theme / "templates"),
-                           autoescape=True).get_template("card.html")
-    fonts = (theme / "static" / "fonts").as_uri()
-    cards = [Card(html=template.render(
-        fonts=fonts, image="", kicker=settings["SITENAME"],
-        title=settings["SITE_DESCRIPTION"], title_size=72,
-        tags=settings["SITE_SUBTITLE"]), target=output / "card.png")]
-    for post in POSTS:
-        image = image_uri(post)
-        cards.append(Card(html=template.render(
-            fonts=fonts, image=image,
-            kicker=(f"Notes \u00b7 {post.ref}" if image
-                    else f"{settings['SITENAME']} \u00b7 {post.ref}"),
-            title=post.title, tags=" \u00b7 ".join(
-                tag.name for tag in post.ordered_tags),
-            title_size=title_size(title=post.title,
-                                  has_image=bool(image))),
-            target=output / post.ref / "card.png"))
-    return cards
+    template = Environment(
+        loader=FileSystemLoader(searchpath=theme / "templates"),
+        autoescape=True,
+    ).get_template(name="card.html")
+    site_card = Card(
+        html=template.render(
+            fonts=(theme / "static" / "fonts").as_uri(),
+            image="",
+            kicker=settings["SITENAME"],
+            title=settings["SITE_DESCRIPTION"],
+            title_size=72,
+            tags=settings["SITE_SUBTITLE"],
+        ),
+        target=output / "card.png",
+    )
+    return [site_card] + [
+        Card(
+            html=post_card(post=post, template=template, settings=settings),
+            target=output / post.ref / "card.png",
+        )
+        for post in POSTS
+    ]
 
 
 def cache_path(card: Card) -> Path:
@@ -148,10 +194,15 @@ def cache_path(card: Card) -> Path:
     Path
         A path under ``.cache/cards/``.
     """
-    digest = hashlib.sha256(card.html.encode("utf-8"))
-    for uri in [part for part in card.html.split('"')
-                if part.startswith("file://") and not part.endswith("fonts")]:
-        path = Path(unquote(uri.removeprefix("file://")))
+    digest = hashlib.sha256(card.html.encode(encoding="utf-8"))
+    uris = [
+        part
+        for part in card.html.split('"')
+        if part.startswith("file://")
+        and not part.endswith("fonts")
+    ]
+    for uri in uris:
+        path = Path(unquote(string=uri.removeprefix("file://")))
         if path.is_file():
             digest.update(path.read_bytes())
     return CACHE_DIR / f"{digest.hexdigest()}.png"
@@ -165,21 +216,24 @@ def draw(cards: list[Card]) -> None:
     cards : list[Card]
         The cards to draw.
     """
-    pending = [card for card in cards if not cache_path(card).exists()]
+    pending = [card for card in cards if not cache_path(card=card).exists()]
     if pending:
         CACHE_DIR.mkdir(parents=True, exist_ok=True)
         with sync_playwright() as playwright:
             browser = playwright.chromium.launch()
             page = browser.new_page(viewport=CARD_SIZE)
             for card in pending:
-                source = cache_path(card).with_suffix(".html")
-                source.write_text(card.html, encoding="utf-8")
-                page.goto(source.resolve().as_uri(), wait_until="load")
-                page.evaluate(FIT_TITLE)
-                page.screenshot(path=cache_path(card))
+                source = cache_path(card=card).with_suffix(".html")
+                source.write_text(data=card.html, encoding="utf-8")
+                page.goto(url=source.resolve().as_uri(), wait_until="load")
+                page.evaluate(expression=FIT_TITLE)
+                page.screenshot(path=cache_path(card=card))
             browser.close()
-    logger.info("cards: drew %d, reused %d", len(pending),
-                len(cards) - len(pending))
+    logger.info(
+        "cards: drew %d, reused %d",
+        len(pending),
+        len(cards) - len(pending),
+    )
 
 
 def publish_cards(pelican: Pelican) -> None:
@@ -190,14 +244,14 @@ def publish_cards(pelican: Pelican) -> None:
     pelican : Pelican
         The finished Pelican run.
     """
-    cards = build_cards(pelican)
-    draw(cards)
+    cards = build_cards(pelican=pelican)
+    draw(cards=cards)
     for card in cards:
         card.target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(cache_path(card), card.target)
+        shutil.copyfile(src=cache_path(card=card), dst=card.target)
 
 
 def register() -> None:
     """Connect the plugin to Pelican's signals."""
-    signals.article_generator_finalized.connect(remember)
-    signals.finalized.connect(publish_cards)
+    signals.article_generator_finalized.connect(receiver=remember)
+    signals.finalized.connect(receiver=publish_cards)

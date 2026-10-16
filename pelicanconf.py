@@ -1,7 +1,7 @@
 """Settings shared by the preview build and the live build."""
 
 AUTHOR = "Patrick Linton"
-SITENAME = "Patrick Linton \u00b7 Notes"
+SITENAME = "Patrick Linton · Notes"
 SITE_DESCRIPTION = "Notes on transport, housing, and climate."
 SITE_SUBTITLE = "Short reports on things I've read, seen, or built."
 SITESUBTITLE = SITE_DESCRIPTION
@@ -19,7 +19,13 @@ DEFAULT_LANG = "en"
 DEFAULT_PAGINATION = False
 SLUGIFY_SOURCE = "basename"
 
-SUBJECT_TAGS = ["Transport", "Housing", "Placemaking", "Climate", "Software & data"]
+SUBJECT_TAGS = [
+    "Transport",
+    "Housing",
+    "Placemaking",
+    "Climate",
+    "Software & data",
+]
 PLACE_TAGS = ["Sydney", "Cambridge", "New York"]
 LINKS = [
     ("LinkedIn", "https://www.linkedin.com/in/plinton/"),
@@ -65,6 +71,13 @@ MARKDOWN = {
 }
 
 PLUGIN_PATHS = ["plugins"]
-PLUGINS = ["series", "sitemap", "references", "notes_markdown", "series_pages", "cards"]
+PLUGINS = [
+    "series",
+    "sitemap",
+    "references",
+    "notes_markdown",
+    "series_pages",
+    "cards",
+]
 SITEMAP = {"format": "xml", "exclude": ["404.html"]}
 GOATCOUNTER_CODE = ""

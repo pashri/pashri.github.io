@@ -16,7 +16,7 @@ preview = "tools.cli:preview"
 publish = "tools.cli:publish"
 
 [dependency-groups]
-dev = ["isort>=6", "mypy>=1.18", "pylint>=4"]
+dev = ["isort>=6", "mypy>=1.18", "numpydoc>=1.8", "pylint>=4"]
 
 [build-system]
 requires = ["hatchling"]
@@ -28,3 +28,14 @@ packages = ["tools"]
 [tool.isort]
 multi_line_output = 3
 include_trailing_comma = true
+
+[tool.numpydoc_validation]
+checks = [
+    "all",   # report on all checks, except the below
+    "EX01",  # don't require "Examples" section
+    "SA01",  # don't require "See Also" section
+    "ES01",  # don't require extended summary
+]
+exclude = [
+    "\\.__init__$",
+]

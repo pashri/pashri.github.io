@@ -22,7 +22,10 @@ def series_slug(name: str, settings: dict) -> str:
     str
         The slug, e.g. ``recording-every-sydney-bus``.
     """
-    return slugify(name, regex_subs=settings["SLUG_REGEX_SUBSTITUTIONS"])
+    return slugify(
+        value=name,
+        regex_subs=settings["SLUG_REGEX_SUBSTITUTIONS"],
+    )
 
 
 def visible_parts(parts: list[Article], preview: bool) -> list[Article]:
@@ -40,8 +43,12 @@ def visible_parts(parts: list[Article], preview: bool) -> list[Article]:
     list[Article]
         Published parts, plus unpublished ones in preview.
     """
-    return [part for part in parts if part.status == "published"
-            and (preview or not getattr(part, "unpublished", False))]
+    return [
+        part
+        for part in parts
+        if part.status == "published"
+        and (preview or not getattr(part, "unpublished", False))
+    ]
 
 
 def annotate(generators: list[Generator]) -> None:
@@ -57,8 +64,11 @@ def annotate(generators: list[Generator]) -> None:
             continue
         for post in generator.articles + generator.hidden_articles:
             if getattr(post, "series", None):
-                post.series_url = (
-                    f"series/{series_slug(post.series['name'], generator.settings)}/")
+                slug = series_slug(
+                    name=post.series["name"],
+                    settings=generator.settings,
+                )
+                post.series_url = f"series/{slug}/"
 
 
 def write(generator: ArticlesGenerator, writer: Writer) -> None:
@@ -72,22 +82,34 @@ def write(generator: ArticlesGenerator, writer: Writer) -> None:
         The writer used for every other page.
     """
     preview = generator.settings["PREVIEW"]
-    shelves = [(name, series_slug(name, generator.settings),
-                visible_parts(parts, preview))
-               for name, parts in
-               sorted(generator.context["article_series"].items())]
+    shelves = [
+        (
+            name,
+            series_slug(name=name, settings=generator.settings),
+            visible_parts(parts=parts, preview=preview),
+        )
+        for name, parts in sorted(generator.context["article_series"].items())
+    ]
     shelves = [shelf for shelf in shelves if shelf[2]]
     for name, slug, parts in shelves:
         writer.write_file(
-            f"series/{slug}/index.html", generator.get_template("series"),
-            generator.context, series_name=name, parts=parts,
-            page_url=f"series/{slug}/")
+            name=f"series/{slug}/index.html",
+            template=generator.get_template(name="series"),
+            context=generator.context,
+            series_name=name,
+            parts=parts,
+            page_url=f"series/{slug}/",
+        )
     writer.write_file(
-        "series/index.html", generator.get_template("series_index"),
-        generator.context, shelves=shelves, url="series/")
+        name="series/index.html",
+        template=generator.get_template(name="series_index"),
+        context=generator.context,
+        shelves=shelves,
+        url="series/",
+    )
 
 
 def register() -> None:
     """Connect the plugin to Pelican's signals."""
-    signals.all_generators_finalized.connect(annotate)
-    signals.article_writer_finalized.connect(write)
+    signals.all_generators_finalized.connect(receiver=annotate)
+    signals.article_writer_finalized.connect(receiver=write)

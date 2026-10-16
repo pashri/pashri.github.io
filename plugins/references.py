@@ -12,10 +12,14 @@ from pelican.generators import ArticlesGenerator
 
 logger = logging.getLogger(__name__)
 
-REF_PATTERN: Final[re.Pattern[str]] = re.compile(r"(\d{2})/(\d{3})")
+REF_PATTERN: Final[re.Pattern[str]] = re.compile(pattern=r"(\d{2})/(\d{3})")
 FIRST_PARA: Final[re.Pattern[str]] = re.compile(
-    r"^<p>(.*?)</p>", re.MULTILINE | re.DOTALL)
-FN_REF: Final[re.Pattern[str]] = re.compile(r'<sup id="fnref[^"]*">.*?</sup>')
+    pattern=r"^<p>(.*?)</p>",
+    flags=re.MULTILINE | re.DOTALL,
+)
+FN_REF: Final[re.Pattern[str]] = re.compile(
+    pattern=r'<sup id="fnref[^"]*">.*?</sup>',
+)
 
 
 class ContentCheckError(Exception):
@@ -59,8 +63,10 @@ def describe(article: Article) -> str:
     """
     if "summary" in article.metadata:
         return str(article.metadata["summary"])
-    match = FIRST_PARA.search(article._content)  # pylint: disable=protected-access
-    return FN_REF.sub("", match[1]) if match else ""
+    match = FIRST_PARA.search(
+        string=article._content,  # pylint: disable=protected-access
+    )
+    return FN_REF.sub(repl="", string=match[1]) if match else ""
 
 
 def annotate(article: Article, tag_order: list[str]) -> None:
@@ -73,7 +79,7 @@ def annotate(article: Article, tag_order: list[str]) -> None:
     tag_order : list[str]
         Subject Tags then place Tags, in display order.
     """
-    match = REF_PATTERN.fullmatch(article.metadata.get("ref", ""))
+    match = REF_PATTERN.fullmatch(string=article.metadata.get("ref", ""))
     article.unpublished = "ref" not in article.metadata
     article.description = describe(article=article)
     article.ref_year = f"20{match[1]}" if match else ""
@@ -105,8 +111,11 @@ def tag_problems(article: Article, settings: dict) -> list[str]:
     name = Path(article.source_path).name
     tags = [tag.name for tag in getattr(article, "tags", [])]
     allowed = settings["SUBJECT_TAGS"] + settings["PLACE_TAGS"]
-    problems = [f"{name}: unknown tag '{tag}'" for tag in tags
-                if tag not in allowed]
+    problems = [
+        f"{name}: unknown tag '{tag}'"
+        for tag in tags
+        if tag not in allowed
+    ]
     if not set(tags) & set(settings["SUBJECT_TAGS"]):
         problems.append(f"{name}: no subject tag")
     return problems
@@ -129,8 +138,10 @@ def image_problems(article: Article) -> list[str]:
     folder = Path(article.source_path).with_suffix("")
     if not name or (folder / name).is_file():
         return []
-    return [f"{Path(article.source_path).name}: Image '{name}' not found "
-            f"in {folder.name}/"]
+    return [
+        f"{Path(article.source_path).name}: Image '{name}' not found "
+        f"in {folder.name}/",
+    ]
 
 
 def ref_problems(article: Article, preview: bool) -> list[str]:
@@ -152,12 +163,14 @@ def ref_problems(article: Article, preview: bool) -> list[str]:
     ref = article.metadata.get("ref")
     if ref is None:
         return [] if preview else [f"{name}: missing Ref"]
-    match = REF_PATTERN.fullmatch(ref)
+    match = REF_PATTERN.fullmatch(string=ref)
     if match is None:
         return [f"{name}: malformed Ref '{ref}'"]
     if match[1] != f"{article.date.year % 100:02d}":
-        return [f"{name}: Ref {ref} doesn't match Date "
-                f"{article.date:%Y-%m-%d}"]
+        return [
+            f"{name}: Ref {ref} doesn't match Date "
+            f"{article.date:%Y-%m-%d}",
+        ]
     return []
 
 
@@ -176,17 +189,23 @@ def sequence_problems(articles: list[Article]) -> list[str]:
     """
     users: dict[str, list[str]] = defaultdict(list)
     for article in articles:
-        if REF_PATTERN.fullmatch(article.metadata.get("ref", "")):
+        if REF_PATTERN.fullmatch(string=article.metadata.get("ref", "")):
             users[article.metadata["ref"]].append(
-                Path(article.source_path).name)
-    problems = [f"Ref {ref} is used by {' and '.join(sorted(names))}"
-                for ref, names in sorted(users.items()) if len(names) > 1]
+                Path(article.source_path).name,
+            )
+    problems = [
+        f"Ref {ref} is used by {' and '.join(sorted(names))}"
+        for ref, names in sorted(users.items())
+        if len(names) > 1
+    ]
     numbers: dict[str, set[int]] = defaultdict(set)
     for ref in users:
         numbers[ref[:2]].add(int(ref[3:]))
-    problems += [f"gap in 20{year}: {year}/{missing:03d} is missing"
-                 for year, taken in sorted(numbers.items())
-                 for missing in sorted(set(range(1, max(taken) + 1)) - taken)]
+    problems += [
+        f"gap in 20{year}: {year}/{missing:03d} is missing"
+        for year, taken in sorted(numbers.items())
+        for missing in sorted(set(range(1, max(taken) + 1)) - taken)
+    ]
     return problems
 
 
@@ -206,22 +225,29 @@ def check(generator: ArticlesGenerator) -> None:
     settings = generator.settings
     posts = generator.articles + generator.hidden_articles
     for post in posts:
-        annotate(article=post,
-                 tag_order=settings["SUBJECT_TAGS"] + settings["PLACE_TAGS"])
-    problems = [problem for post in posts
-                for problem in ref_problems(article=post,
-                                            preview=settings["PREVIEW"])
-                + tag_problems(article=post, settings=settings)
-                + image_problems(article=post)]
+        annotate(
+            article=post,
+            tag_order=settings["SUBJECT_TAGS"] + settings["PLACE_TAGS"],
+        )
+    problems = [
+        problem
+        for post in posts
+        for problem in (
+            ref_problems(article=post, preview=settings["PREVIEW"])
+            + tag_problems(article=post, settings=settings)
+            + image_problems(article=post)
+        )
+    ]
     problems += sequence_problems(articles=posts)
     for problem in problems:
         logger.warning(problem)
     if problems and not settings["PREVIEW"]:
         raise ContentCheckError(
-            f"{len(problems)} content problem(s); see the warnings above")
+            f"{len(problems)} content problem(s); see the warnings above",
+        )
 
 
 def register() -> None:
     """Connect the plugin to Pelican's signals."""
-    signals.content_object_init.connect(route_unpublished)
-    signals.article_generator_finalized.connect(check)
+    signals.content_object_init.connect(receiver=route_unpublished)
+    signals.article_generator_finalized.connect(receiver=check)

@@ -16,10 +16,12 @@ from pelican.contents import Article
 from pelican.generators import ArticlesGenerator
 
 EMBED_LINE: Final[re.Pattern[str]] = re.compile(
-    r"\{%\s*embed\s+(?P<attrs>.*?)\s*%\}")
-EMBED_ATTR: Final[re.Pattern[str]] = re.compile(r'(\w+)="([^"]*)"')
+    pattern=r"\{%\s*embed\s+(?P<attrs>.*?)\s*%\}",
+)
+EMBED_ATTR: Final[re.Pattern[str]] = re.compile(pattern=r'(\w+)="([^"]*)"')
 RELATIVE_LINK: Final[re.Pattern[str]] = re.compile(
-    r'\b(src|href|data-src|data-data)="(?![a-z]+:|/|#)([^"]+)"')
+    pattern=r'\b(src|href|data-src|data-data)="(?![a-z]+:|/|#)([^"]+)"',
+)
 POST_URL_TOKEN: Final[str] = "__POST_URL__"
 
 
@@ -45,14 +47,19 @@ def embed_html(attrs: dict[str, str]) -> str:
     if missing:
         raise ValueError(f"embed is missing {', '.join(missing)}")
     caption = attrs.get("caption", "")
-    figcaption = (f"<figcaption>{html.escape(caption)}</figcaption>"
-                  if caption else "")
-    return (f'<figure class="embed" data-src="{html.escape(attrs["src"])}"'
-            f' data-data="{html.escape(attrs["data"])}">'
-            '<div class="embed-mount"></div>'
-            f'<p class="embed-fallback"><a href="{POST_URL_TOKEN}">'
-            "Interactive figure: view it on the site</a></p>"
-            f"{figcaption}</figure>")
+    figcaption = (
+        f"<figcaption>{html.escape(caption)}</figcaption>"
+        if caption
+        else ""
+    )
+    return (
+        f'<figure class="embed" data-src="{html.escape(attrs["src"])}"'
+        f' data-data="{html.escape(attrs["data"])}">'
+        '<div class="embed-mount"></div>'
+        f'<p class="embed-fallback"><a href="{POST_URL_TOKEN}">'
+        "Interactive figure: view it on the site</a></p>"
+        f"{figcaption}</figure>"
+    )
 
 
 class EmbedPreprocessor(Preprocessor):
@@ -86,15 +93,17 @@ class EmbedPreprocessor(Preprocessor):
         str
             The line itself, or a placeholder for the stored figure.
         """
-        match = EMBED_LINE.fullmatch(line.strip())
+        match = EMBED_LINE.fullmatch(string=line.strip())
         if match is None:
             return line
-        attrs = dict(EMBED_ATTR.findall(match["attrs"]))
-        return self.md.htmlStash.store(embed_html(attrs=attrs))
+        attrs = dict(EMBED_ATTR.findall(string=match["attrs"]))
+        return self.md.htmlStash.store(html=embed_html(attrs=attrs))
 
 
-class FigureTreeprocessor(Treeprocessor):  # pylint: disable=too-few-public-methods
+class FigureTreeprocessor(Treeprocessor):
     """Turn a paragraph holding only an image into a figure."""
+
+    # pylint: disable=too-few-public-methods
 
     def run(self, root: etree.Element) -> None:
         """Convert every lone-image paragraph under ``root``.
@@ -104,7 +113,7 @@ class FigureTreeprocessor(Treeprocessor):  # pylint: disable=too-few-public-meth
         root : etree.Element
             The parsed document.
         """
-        for para in list(root.iter("p")):
+        for para in list(root.iter(tag="p")):
             if is_lone_image(para=para):
                 to_figure(para=para)
 
@@ -122,9 +131,12 @@ def is_lone_image(para: etree.Element) -> bool:
     bool
         True if the only content is a single ``<img>``.
     """
-    return (len(para) == 1 and para[0].tag == "img"
-            and not (para.text or "").strip()
-            and not (para[0].tail or "").strip())
+    return (
+        len(para) == 1
+        and para[0].tag == "img"
+        and not (para.text or "").strip()
+        and not (para[0].tail or "").strip()
+    )
 
 
 def to_figure(para: etree.Element) -> None:
@@ -153,9 +165,16 @@ class NotesExtension(Extension):
         md : Markdown
             The Markdown instance Pelican's reader uses.
         """
-        md.preprocessors.register(EmbedPreprocessor(md), "notes_embed", 25)
+        md.preprocessors.register(
+            item=EmbedPreprocessor(md=md),
+            name="notes_embed",
+            priority=25,
+        )
         md.treeprocessors.register(
-            FigureTreeprocessor(md), "notes_figure", 15)
+            item=FigureTreeprocessor(md=md),
+            name="notes_figure",
+            priority=15,
+        )
 
 
 def add_extension(pelican: Pelican) -> None:
@@ -167,7 +186,8 @@ def add_extension(pelican: Pelican) -> None:
         The Pelican instance being initialised.
     """
     pelican.settings["MARKDOWN"].setdefault("extensions", []).append(
-        NotesExtension())
+        NotesExtension(),
+    )
 
 
 def rewrite_links(generator: ArticlesGenerator) -> None:
@@ -198,8 +218,11 @@ def copy_attachments(post: Article, output: Path) -> None:
     """
     folder = Path(post.source_path).with_suffix("")
     if folder.is_dir():
-        shutil.copytree(folder, output / Path(post.save_as).parent,
-                        dirs_exist_ok=True)
+        shutil.copytree(
+            src=folder,
+            dst=output / Path(post.save_as).parent,
+            dirs_exist_ok=True,
+        )
 
 
 def rewrite_post(post: Article, site_url: str) -> None:
@@ -214,14 +237,16 @@ def rewrite_post(post: Article, site_url: str) -> None:
     """
     base = f"{site_url}/{post.url}"
     content = RELATIVE_LINK.sub(
-        lambda match: f'{match[1]}="{base}{match[2]}"',
-        post._content,  # pylint: disable=protected-access
+        repl=lambda match: f'{match[1]}="{base}{match[2]}"',
+        string=post._content,  # pylint: disable=protected-access
     )
     post._content = content.replace(  # pylint: disable=protected-access
-        POST_URL_TOKEN, f"{site_url}/{post.url}")
+        POST_URL_TOKEN,
+        f"{site_url}/{post.url}",
+    )
 
 
 def register() -> None:
     """Connect the plugin to Pelican's signals."""
-    signals.initialized.connect(add_extension)
-    signals.article_generator_finalized.connect(rewrite_links)
+    signals.initialized.connect(receiver=add_extension)
+    signals.article_generator_finalized.connect(receiver=rewrite_links)
