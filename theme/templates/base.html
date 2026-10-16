@@ -23,8 +23,10 @@
 </head>
 <body>
 <div class="page">
+<main>
 {% block content %}{% endblock %}
-<footer class="site-footer"><a href="{{ SITEURL }}/">Home</a> · <a href="{{ SITEURL }}/about/">About</a> · <a href="{{ SITEURL }}/series/">Series</a> · <a href="{{ SITEURL }}/{{ FEED_ALL_RSS }}">RSS</a></footer>
+</main>
+<footer class="site-footer"><nav aria-label="Footer"><a href="{{ SITEURL }}/">Home</a> · <a href="{{ SITEURL }}/about/">About</a> · <a href="{{ SITEURL }}/series/">Series</a> · <a href="{{ SITEURL }}/{{ FEED_ALL_RSS }}">RSS</a></nav></footer>
 </div>
 </body>
 </html>

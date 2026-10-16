@@ -3,7 +3,9 @@
 {% block canonical %}{{ page.url }}{% endblock %}
 {% block content %}
 {% include "_topbar.html" %}
+<article class="page-body">
 <header class="post-head"><h1 class="title">{{ page.title|e }}</h1></header>
-<article class="prose">{{ page.content }}</article>
+<div class="prose">{{ page.content }}</div>
+</article>
 <p class="about-links">{% for name, url in LINKS %}<a href="{{ url }}">{{ name }}</a>{% endfor %}</p>
 {% endblock %}

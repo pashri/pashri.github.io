@@ -205,9 +205,4 @@ If the site doesn't update, go to **github.com/pashri/pashri.github.io → Actio
 
 ## Visitor numbers
 
-The site can count visitors with GoatCounter, which uses no cookies. Counting is off until you switch it on:
-
-1. Sign up at https://www.goatcounter.com and pick a code, e.g. `pashri`.
-2. Set `GOATCOUNTER_CODE = "pashri"` in `publishconf.py`, then commit and push.
-
-The numbers then appear at `https://<code>.goatcounter.com`.
+The site counts visitors with GoatCounter, which uses no cookies. See the numbers at https://pashri.goatcounter.com. The code that connects the site to that dashboard is `GOATCOUNTER_CODE` in `publishconf.py`; set it to `""` to switch counting off.

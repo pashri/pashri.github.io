@@ -11,13 +11,13 @@
 {% block content %}
 {% include "_topbar.html" %}
 {% set parts = article.content.split('<div class="footnote">') %}
-<div class="post">
+<article class="post">
 <header class="post-head">
-<div class="kicker">{% if article.unpublished %}Not yet published{% else %}Ref. {{ article.ref }}{% endif %} · {{ article.date.strftime("%-d %b %Y") }} · {{ article.ordered_tags|join(" · ", attribute="name")|e }}</div>
+<p class="kicker">{% if article.unpublished %}Not yet published{% else %}Ref. {{ article.ref }}{% endif %} · <time datetime="{{ article.date.strftime("%Y-%m-%d") }}">{{ article.date.strftime("%-d %b %Y") }}</time> · {{ article.ordered_tags|join(" · ", attribute="name")|e }}</p>
 <h1 class="title">{{ article.title|e }}</h1>
 </header>
-<article class="prose">{{ parts[0] }}</article>
-</div>
+<div class="prose">{{ parts[0] }}</div>
 {% include "_series_box.html" ignore missing %}
-{% if parts|length > 1 %}<section class="footnotes"><div class="footnote">{{ parts[1] }}</section>{% endif %}
+{% if parts|length > 1 %}<section class="footnotes" aria-label="Footnotes"><div class="footnote">{{ parts[1] }}</section>{% endif %}
+</article>
 {% endblock %}

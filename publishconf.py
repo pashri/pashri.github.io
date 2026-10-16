@@ -12,4 +12,4 @@ SITEURL = "https://pashri.github.io"
 FEED_DOMAIN = SITEURL
 RELATIVE_URLS = False
 PREVIEW = False
-GOATCOUNTER_CODE = ""
+GOATCOUNTER_CODE = "pashri"
