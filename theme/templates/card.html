@@ -1,0 +1,20 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><style>
+@font-face{font-family:"Newsreader";src:url("{{ fonts }}/newsreader-500-normal.woff2");font-weight:500}
+@font-face{font-family:"Source Code Pro";src:url("{{ fonts }}/source-code-pro-500-normal.woff2");font-weight:500}
+@font-face{font-family:"Source Sans 3";src:url("{{ fonts }}/source-sans-3-400-normal.woff2");font-weight:400}
+html,body{margin:0;width:1200px;height:630px;background:#f7f8f5;color:#1d2329}
+.card{position:relative;width:1200px;height:630px;box-sizing:border-box;padding:80px 84px 70px}
+.text{display:flex;flex-direction:column;gap:24px;height:100%}
+.with-image .text{width:560px}
+.kicker{font:500 30px "Source Code Pro",monospace;letter-spacing:.04em;text-transform:uppercase;color:#646d67;padding-bottom:24px;border-bottom:8px solid #1d2329}
+.title{font:500 {{ title_size }}px/1.08 "Newsreader",serif;text-wrap:balance;overflow:hidden}
+.tags{font:400 32px "Source Sans 3",sans-serif;color:#646d67;margin-top:auto}
+.figure{box-sizing:border-box;position:absolute;top:80px;right:60px;bottom:70px;width:470px;border-left:4px solid #cfd4cc;padding-left:34px;display:flex;align-items:center;justify-content:center}
+.figure img{max-width:100%;max-height:100%;object-fit:contain}
+.redline{position:absolute;right:64px;bottom:64px;width:180px;height:120px;border:6px dashed #c41e2a}
+</style></head>
+<body><div class="card{% if image %} with-image{% endif %}">
+<div class="text"><div class="kicker">{{ kicker }}</div><div class="title">{{ title }}</div><div class="tags">{{ tags }}</div></div>
+{% if image %}<div class="figure"><img src="{{ image }}" alt=""></div>{% else %}<div class="redline"></div>{% endif %}
+</div></body></html>

@@ -64,6 +64,6 @@ MARKDOWN = {
 }
 
 PLUGIN_PATHS = ["plugins"]
-PLUGINS = ["series", "sitemap", "references", "notes_markdown", "series_pages"]
+PLUGINS = ["series", "sitemap", "references", "notes_markdown", "series_pages", "cards"]
 SITEMAP = {"format": "xml", "exclude": ["404.html"]}
 GOATCOUNTER_CODE = ""
