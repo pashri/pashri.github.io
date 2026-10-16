@@ -117,7 +117,8 @@ def build_cards(pelican: Pelican) -> list[Card]:
         image = image_uri(post)
         cards.append(Card(html=template.render(
             fonts=fonts, image=image,
-            kicker=f"{settings['SITENAME']} \u00b7 {post.ref}",
+            kicker=(f"Notes \u00b7 {post.ref}" if image
+                    else f"{settings['SITENAME']} \u00b7 {post.ref}"),
             title=post.title, tags=" \u00b7 ".join(
                 tag.name for tag in post.ordered_tags),
             title_size=title_size(title=post.title,
