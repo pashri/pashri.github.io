@@ -41,7 +41,8 @@ Use at least one subject, plus any places. Only these tags are allowed, and any 
 |---|---|
 | Transport | Sydney |
 | Housing | Cambridge |
-| Climate | NYC |
+| Placemaking | NYC |
+| Climate | |
 | Software & data | |
 
 Write them exactly as above, capitals included. The order doesn't matter.
@@ -176,7 +177,7 @@ To take a post down, don't delete it, because that leaves a gap in the numbering
 The tags are two lists in `pelicanconf.py`:
 
 ```python
-SUBJECT_TAGS = ["Transport", "Housing", "Climate", "Software & data"]
+SUBJECT_TAGS = ["Transport", "Housing", "Placemaking", "Climate", "Software & data"]
 PLACE_TAGS = ["Sydney", "Cambridge", "NYC"]
 ```
 
