@@ -1,0 +1,30 @@
+[project]
+name = "pashri-notes"
+version = "1.0.0"
+description = "Patrick Linton - Notes"
+requires-python = ">=3.14"
+dependencies = [
+    "pelican[markdown]==4.12.0",
+    "pelican-series>=3.1.1",
+    "pelican-sitemap>=1.2.2",
+    "playwright>=1.64",
+    "pygments>=2.19",
+]
+
+[project.scripts]
+preview = "tools.cli:preview"
+publish = "tools.cli:publish"
+
+[dependency-groups]
+dev = ["isort>=6", "mypy>=1.18", "pylint>=4"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["tools"]
+
+[tool.isort]
+multi_line_output = 3
+include_trailing_comma = true
