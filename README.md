@@ -41,7 +41,7 @@ Use at least one subject, plus any places. Only these tags are allowed, and any 
 |---|---|
 | Transport | Sydney |
 | Housing | Cambridge |
-| Placemaking | NYC |
+| Placemaking | New York |
 | Climate | |
 | Software & data | |
 
@@ -178,7 +178,7 @@ The tags are two lists in `pelicanconf.py`:
 
 ```python
 SUBJECT_TAGS = ["Transport", "Housing", "Placemaking", "Climate", "Software & data"]
-PLACE_TAGS = ["Sydney", "Cambridge", "NYC"]
+PLACE_TAGS = ["Sydney", "Cambridge", "New York"]
 ```
 
 Add the new tag to the right list, in the position you want it to appear, then use it in a post and push. The tag bar under the masthead, the order tags are shown on each post, and the build check all come from these lists. The tag's page appears by itself at `/tags/<tag-in-lowercase-with-hyphens>/`, e.g. "Public health" becomes `/tags/public-health/`.

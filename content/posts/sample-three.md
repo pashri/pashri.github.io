@@ -1,6 +1,6 @@
 Title: Sed do eiusmod tempor
 Date: 2025-09-18
-Tags: Software & data, Transport, NYC
+Tags: Software & data, Transport, New York
 Ref: 25/003
 Series: Sample series
 Image: chart.svg

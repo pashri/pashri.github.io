@@ -20,7 +20,7 @@ DEFAULT_PAGINATION = False
 SLUGIFY_SOURCE = "basename"
 
 SUBJECT_TAGS = ["Transport", "Housing", "Placemaking", "Climate", "Software & data"]
-PLACE_TAGS = ["Sydney", "Cambridge", "NYC"]
+PLACE_TAGS = ["Sydney", "Cambridge", "New York"]
 LINKS = [
     ("LinkedIn", "https://www.linkedin.com/in/plinton/"),
     ("GitHub", "https://github.com/pashri"),
