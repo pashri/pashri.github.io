@@ -12,6 +12,7 @@ permissions:
 
 concurrency:
   group: pages
+  # Two pushes in quick succession cancel the first deploy; the second still deploys.
   cancel-in-progress: true
 
 jobs:
