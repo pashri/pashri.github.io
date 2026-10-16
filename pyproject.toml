@@ -9,6 +9,7 @@ dependencies = [
     "pelican-sitemap>=1.2.2",
     "playwright>=1.64",
     "pygments>=2.19",
+    "pillow>=12.3.0",
 ]
 
 [project.scripts]

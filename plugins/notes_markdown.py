@@ -14,6 +14,7 @@ from markdown.treeprocessors import Treeprocessor
 from pelican import Pelican, signals
 from pelican.contents import Article
 from pelican.generators import ArticlesGenerator
+from PIL import Image
 
 EMBED_LINE: Final[re.Pattern[str]] = re.compile(
     pattern=r"\{%\s*embed\s+(?P<attrs>.*?)\s*%\}",
@@ -23,6 +24,13 @@ RELATIVE_LINK: Final[re.Pattern[str]] = re.compile(
     pattern=r'\b(src|href|data-src|data-data)="(?![a-z]+:|/|#)([^"]+)"',
 )
 POST_URL_TOKEN: Final[str] = "__POST_URL__"
+IMG_TAG: Final[re.Pattern[str]] = re.compile(pattern=r"<img\b[^>]*>")
+RELATIVE_SRC: Final[re.Pattern[str]] = re.compile(
+    pattern=r'\bsrc="(?![a-z]+:|/|#)([^"]+)"',
+)
+SVG_VIEWBOX: Final[re.Pattern[str]] = re.compile(
+    pattern=r'viewBox="[\d.-]+[\s,]+[\d.-]+[\s,]+([\d.]+)[\s,]+([\d.]+)"',
+)
 
 
 def embed_html(attrs: dict[str, str]) -> str:
@@ -225,8 +233,60 @@ def copy_attachments(post: Article, output: Path) -> None:
         )
 
 
+def image_size(path: Path) -> tuple[int, int] | None:
+    """Read an image's intrinsic width and height.
+
+    Parameters
+    ----------
+    path : Path
+        A raster image, or an SVG with a ``viewBox``.
+
+    Returns
+    -------
+    tuple[int, int] | None
+        Width and height in pixels, or None if the file is missing or an
+        SVG has no ``viewBox``.
+    """
+    if not path.is_file():
+        return None
+    if path.suffix.lower() == ".svg":
+        match = SVG_VIEWBOX.search(string=path.read_text(encoding="utf-8"))
+        return (
+            (round(float(match[1])), round(float(match[2])))
+            if match
+            else None
+        )
+    with Image.open(fp=path) as image:
+        return image.size
+
+
+def size_image(tag: str, folder: Path) -> str:
+    """Add ``loading``, ``width`` and ``height`` to one ``<img>`` tag.
+
+    Attributes the tag already has are left alone.
+
+    Parameters
+    ----------
+    tag : str
+        One ``<img ...>`` tag, with its ``src`` still relative.
+    folder : Path
+        The Post's attachment folder the ``src`` is relative to.
+
+    Returns
+    -------
+    str
+        The tag with the missing attributes added.
+    """
+    src = RELATIVE_SRC.search(string=tag)
+    size = image_size(path=folder / src[1]) if src else None
+    extra = [] if "loading=" in tag else ['loading="lazy"']
+    if size and "width=" not in tag:
+        extra += [f'width="{size[0]}"', f'height="{size[1]}"']
+    return tag[:4] + "".join(f" {attribute}" for attribute in extra) + tag[4:]
+
+
 def rewrite_post(post: Article, site_url: str) -> None:
-    """Point one Post's relative links at its own address.
+    """Size a Post's images and point its relative links at its address.
 
     Parameters
     ----------
@@ -236,9 +296,14 @@ def rewrite_post(post: Article, site_url: str) -> None:
         The site's base URL; empty in the preview build.
     """
     base = f"{site_url}/{post.url}"
+    folder = Path(post.source_path).with_suffix("")
+    content = IMG_TAG.sub(
+        repl=lambda match: size_image(tag=match[0], folder=folder),
+        string=post._content,  # pylint: disable=protected-access
+    )
     content = RELATIVE_LINK.sub(
         repl=lambda match: f'{match[1]}="{base}{match[2]}"',
-        string=post._content,  # pylint: disable=protected-access
+        string=content,
     )
     post._content = content.replace(  # pylint: disable=protected-access
         POST_URL_TOKEN,

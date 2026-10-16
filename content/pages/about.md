@@ -1,4 +1,5 @@
 Title: About
+Headshot: images/headshot.jpg
 
 I'm from Brooklyn. When I was a kid, my family moved to the outer suburbs of Atlanta, and I hated it. I couldn't go anywhere unless my parents drove me, so for everyone I knew, a car at sixteen meant freedom. In my last term of high school, seven students died. Six of them died in car crashes, and there were always grief counsellors at the school. When we visited family back in New York, I had the freedom of the city. It took me years to see how much of the difference was the places themselves.
 

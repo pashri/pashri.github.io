@@ -9,7 +9,6 @@
 {% if 'class="embed"' in article.content %}<script src="{{ SITEURL }}/theme/js/embed.js" type="module"></script>{% endif %}
 {% endblock %}
 {% block content %}
-{% include "_topbar.html" %}
 {% set parts = article.content.split('<div class="footnote">') %}
 <article class="post">
 <header class="post-head">

@@ -187,7 +187,7 @@ Renaming a tag changes its page's address, and every post using the old name fai
 
 ## Other pages
 
-- **About:** `content/pages/about.md`.
+- **About:** `content/pages/about.md`. The photo beside the first paragraph is `content/images/headshot.jpg` (a 320×320 JPEG), named on the page's `Headshot:` line.
 - **Sample posts:** the three lorem ipsum posts (`content/posts/sample-*.md` and their folders) exist to show every feature. Delete all three together; deleting only some can leave a gap in 2025, which fails the build.
 
 ## Theme

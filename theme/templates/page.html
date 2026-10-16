@@ -2,10 +2,9 @@
 {% block title %}{{ page.title }} | {{ SITENAME }}{% endblock %}
 {% block canonical %}{{ page.url }}{% endblock %}
 {% block content %}
-{% include "_topbar.html" %}
 <article class="page-body">
 <header class="post-head"><h1 class="title">{{ page.title|e }}</h1></header>
-<div class="prose">{{ page.content }}</div>
+<div class="prose">{% if page.headshot %}<img class="headshot" src="{{ SITEURL }}/{{ page.headshot|e }}" alt="{{ AUTHOR|e }}" width="320" height="320">{% endif %}{{ page.content }}</div>
 </article>
 <p class="about-links">{% for name, url in LINKS %}<a href="{{ url }}">{{ name }}</a>{% endfor %}</p>
 {% endblock %}

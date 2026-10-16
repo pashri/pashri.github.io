@@ -2,7 +2,6 @@
 {% block title %}{{ tag }} | {{ SITENAME }}{% endblock %}
 {% block canonical %}{{ tag.url }}{% endblock %}
 {% block content %}
-{% include "_topbar.html" %}
 <header class="post-head"><p class="kicker">Tag</p><h1 class="title">{{ tag|e }}</h1></header>
 {% set posts = articles %}
 {% include "_register.html" %}

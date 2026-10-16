@@ -78,6 +78,11 @@ h1.title{font-size:34px;line-height:1.1;font-weight:400;margin:0;text-wrap:balan
 .prose td{border-bottom:1px solid var(--rule);padding:6px 14px 6px 0;font-variant-numeric:tabular-nums}
 .prose img{max-width:100%;height:auto}
 .prose figure{margin:0;display:grid;gap:8px}
+.prose:has(> .headshot){grid-template-columns:1fr 128px;column-gap:24px}
+.prose:has(> .headshot) > *{grid-column:1 / -1}
+.prose:has(> .headshot) > p:first-of-type{grid-column:1;grid-row:1}
+.prose:has(> .headshot) > .headshot{grid-column:2;grid-row:1;width:128px;height:auto;border-radius:4px}
+@media (max-width:560px){.prose:has(> .headshot){grid-template-columns:1fr 88px;column-gap:16px}.prose:has(> .headshot) > .headshot{width:88px}}
 .prose figcaption{font-family:var(--sans);font-size:14px;color:var(--muted)}
 code{font-family:var(--mono);font-size:.82em;background:var(--tint);padding:.08em .32em;border-radius:3px}
 .highlight pre,.prose pre{margin:0;background:var(--tint);border-left:3px solid var(--rule);padding:12px 14px;overflow-x:auto;font-size:14px;line-height:1.5}

@@ -2,7 +2,6 @@
 {% block title %}Series | {{ SITENAME }}{% endblock %}
 {% block canonical %}series/{% endblock %}
 {% block content %}
-{% include "_topbar.html" %}
 <header class="post-head"><p class="kicker">Series</p><h1 class="title">Series</h1></header>
 <table class="register"><thead><tr><th>Parts</th><th>Series</th></tr></thead>
 <tbody>{% for name, slug, parts in shelves %}<tr><td class="ref">{{ parts|length }}</td><td class="ttl"><a href="{{ SITEURL }}/series/{{ slug }}/">{{ name|e }}</a></td></tr>{% else %}<tr><td colspan="2">No series yet.</td></tr>{% endfor %}</tbody></table>

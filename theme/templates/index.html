@@ -1,7 +1,9 @@
 {% extends "base.html" %}
-{% block content %}
+{% block banner %}
 {% include "_masthead.html" %}
 {% include "_tagbar.html" %}
+{% endblock %}
+{% block content %}
 {% set posts = articles %}
 {% include "_register.html" %}
 {% endblock %}
